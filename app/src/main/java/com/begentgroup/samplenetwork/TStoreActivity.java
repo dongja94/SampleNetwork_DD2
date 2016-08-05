@@ -1,14 +1,18 @@
 package com.begentgroup.samplenetwork;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.begentgroup.samplenetwork.autodata.Product;
 import com.begentgroup.samplenetwork.autodata.TStoreResult;
 import com.google.gson.Gson;
 
@@ -25,6 +29,7 @@ import java.net.URLEncoder;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.OnItemClick;
 
 public class TStoreActivity extends AppCompatActivity {
 
@@ -58,6 +63,14 @@ public class TStoreActivity extends AppCompatActivity {
             new TStoreSearchTask().execute(keyword);
         }
     }
+
+    @OnItemClick(R.id.list_tstore)
+    public void onProductItemClick(AdapterView<?> parent, View view, int position, long id) {
+        Product p = (Product)listView.getItemAtPosition(position);
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(p.getTinyUrl()));
+        startActivity(intent);
+    }
+
 
     private static final String TSTORE_URL = "http://apis.skplanetx.com/tstore/products?version=1&page=1&count=10&searchKeyword=%s&order=L";
     private static final String SORT_ACCURACY = "R";
