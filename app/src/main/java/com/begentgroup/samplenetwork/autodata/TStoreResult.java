@@ -1,13 +1,13 @@
 package com.begentgroup.samplenetwork.autodata;
 
 public class TStoreResult  {
-    private Tstore tstore;
+    private TStore tstore;
 
-    public Tstore getTstore() {
+    public TStore getTstore() {
         return this.tstore;
     }
 
-    public void setTstore(Tstore tstore) {
+    public void setTstore(TStore tstore) {
         this.tstore = tstore;
     }
 

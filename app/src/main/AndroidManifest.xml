@@ -17,7 +17,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".TStoreActivity"></activity>
+        <activity android:name=".TStoreActivity" />
+        <activity android:name=".TStoreXMLActivity" />
+        <activity android:name=".TStoreManagerActivity"></activity>
     </application>
 
 </manifest>

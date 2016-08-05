@@ -13,13 +13,11 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.begentgroup.samplenetwork.autodata.Product;
-import com.begentgroup.samplenetwork.autodata.TStoreResult;
-import com.google.gson.Gson;
+import com.begentgroup.samplenetwork.autodata.TStore;
+import com.begentgroup.xmlparser.XMLParser;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -31,7 +29,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnItemClick;
 
-public class TStoreActivity extends AppCompatActivity {
+public class TStoreXMLActivity extends AppCompatActivity {
 
     @BindView(R.id.edit_input)
     EditText keywordView;
@@ -39,7 +37,7 @@ public class TStoreActivity extends AppCompatActivity {
     @BindView(R.id.list_tstore)
     ListView listView;
 
-//    ArrayAdapter<Product> mAdapter;
+    //    ArrayAdapter<Product> mAdapter;
     ProductAdapter mAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,31 +75,22 @@ public class TStoreActivity extends AppCompatActivity {
     private static final String SORT_LATEST = "L";
     private static final String SORT_DOWNLOAD = "D";
 
-    class TStoreSearchTask extends AsyncTask<String,Integer,TStoreResult> {
+    class TStoreSearchTask extends AsyncTask<String,Integer,TStore> {
 
         @Override
-        protected TStoreResult doInBackground(String... strings) {
+        protected TStore doInBackground(String... strings) {
             String keyword = strings[0];
             try {
                 String urlText = String.format(TSTORE_URL, URLEncoder.encode(keyword, "utf-8"));
                 URL url = new URL(urlText);
                 HttpURLConnection conn = (HttpURLConnection)url.openConnection();
-                conn.setRequestProperty("Accept", "application/json");
+                conn.setRequestProperty("Accept", "application/xml");
                 conn.setRequestProperty("appKey","2bc7afe3-fc89-3125-b699-b9fb7cfe2fae");
                 int code = conn.getResponseCode();
                 if (code >= 200 && code < 300) {
                     InputStream is = conn.getInputStream();
-                    BufferedReader br = new BufferedReader(new InputStreamReader(is));
-//                    StringBuilder sb = new StringBuilder();
-//                    String line;
-//                    while((line=br.readLine()) != null) {
-//                        sb.append(line).append("\r\n");
-//                    }
-//                    TStoreResult result = new TStoreResult();
-//                    JSONObject jobject = new JSONObject(sb.toString());
-//                    result.parseJson(jobject);
-                    Gson gson = new Gson();
-                    TStoreResult result = gson.fromJson(br, TStoreResult.class);
+                    XMLParser parser = new XMLParser();
+                    TStore result = parser.fromXml(is, "tstore", TStore.class);
                     return result;
                 }
             } catch (UnsupportedEncodingException e) {
@@ -115,13 +104,12 @@ public class TStoreActivity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute(TStoreResult s) {
+        protected void onPostExecute(TStore s) {
             super.onPostExecute(s);
             if (s != null) {
-//                Toast.makeText(TStoreActivity.this, "data : " + s, Toast.LENGTH_SHORT).show();
-                mAdapter.addAll(s.getTstore().getProducts().getProductList());
+                mAdapter.addAll(s.getProducts().getProductList());
             } else {
-                Toast.makeText(TStoreActivity.this, "error", Toast.LENGTH_SHORT).show();
+                Toast.makeText(TStoreXMLActivity.this, "error", Toast.LENGTH_SHORT).show();
             }
         }
     }

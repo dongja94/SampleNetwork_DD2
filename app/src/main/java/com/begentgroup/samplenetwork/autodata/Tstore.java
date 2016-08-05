@@ -1,6 +1,6 @@
 package com.begentgroup.samplenetwork.autodata;
 
-public class Tstore {
+public class TStore {
     private int totalCount;
     private Products products;
 
