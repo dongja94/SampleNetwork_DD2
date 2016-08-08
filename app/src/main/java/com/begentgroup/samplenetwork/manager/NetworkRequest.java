@@ -47,48 +47,72 @@ public abstract class NetworkRequest<T> implements Runnable {
     }
 
     private void sendSuccess(T result) {
+        if(isCancel) return;
         this.result = result;
         NetworkManager.getInstance().sendSuccess(this);
     }
 
     void sendSuccess() {
-        if (listener != null) {
+        if (listener != null && !isCancel) {
             listener.onSuccess(this, result);
         }
     }
 
 
+    boolean isCancel = false;
+    public void setCancel(boolean cancel) {
+        if (isCancel != cancel) {
+            isCancel = cancel;
+        }
+    }
+
+    public boolean isCancel() {
+        return isCancel;
+    }
+
     abstract protected T parse(InputStream is);
+
+    int retryCount = 3;
 
     @Override
     public void run() {
-        try {
-            URL url = getURL();
-            HttpURLConnection conn = (HttpURLConnection)url.openConnection();
-            setNetworkConfig(conn);
-            String method = getRequestMethod();
-            conn.setRequestMethod(method);
-            if (method.equals(POST) || method.equals(PUT)) {
-                conn.setDoOutput(true);
-            }
-            setRequestProperty(conn);
-            if (conn.getDoOutput()) {
-                write(conn.getOutputStream());
-            }
+        int retry = retryCount;
+        while(retry > 0) {
+            try {
+                if (isCancel) return;
+                URL url = getURL();
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                setNetworkConfig(conn);
+                String method = getRequestMethod();
+                conn.setRequestMethod(method);
+                if (method.equals(POST) || method.equals(PUT)) {
+                    conn.setDoOutput(true);
+                }
+                setRequestProperty(conn);
+                if (isCancel) return;
+                if (conn.getDoOutput()) {
+                    write(conn.getOutputStream());
+                }
+                if (isCancel) return;
 
-            int code = conn.getResponseCode();
-            if (code >= 200 && code < 300) {
-                InputStream is = conn.getInputStream();
-                process(is);
+                int code = conn.getResponseCode();
+                if (isCancel) return;
+                if (code >= 200 && code < 300) {
+                    InputStream is = conn.getInputStream();
+                    process(is);
+                    return;
+                } else {
+                    sendError(code, conn.getResponseMessage());
+                    return;
+                }
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+                sendError(-1, e.getMessage());
                 return;
-            } else {
-                sendError(code, conn.getResponseMessage());
-                return;
+            } catch (IOException e) {
+                e.printStackTrace();
+                retry--;
             }
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
         }
         sendError(-1, "exception");
     }
@@ -96,13 +120,14 @@ public abstract class NetworkRequest<T> implements Runnable {
     int code;
     String errorMessage;
     protected void sendError(int code, String errorMessage) {
+        if (isCancel) return;
         this.code = code;
         this.errorMessage = errorMessage;
         NetworkManager.getInstance().sendFail(this);
     }
 
     void sendFail() {
-        if (listener != null) {
+        if (listener != null && !isCancel) {
             listener.onFail(this, code, errorMessage);
         }
     }

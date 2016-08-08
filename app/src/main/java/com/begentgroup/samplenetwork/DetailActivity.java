@@ -1,6 +1,7 @@
 package com.begentgroup.samplenetwork;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -14,6 +15,7 @@ import android.widget.Toast;
 
 import com.begentgroup.samplenetwork.autodata.Product;
 import com.begentgroup.samplenetwork.autodata.ProductModel;
+import com.begentgroup.samplenetwork.manager.ImageRequest;
 import com.begentgroup.samplenetwork.manager.NetworkManager;
 import com.begentgroup.samplenetwork.manager.NetworkRequest;
 import com.begentgroup.samplenetwork.manager.TStoreDetailRequest;
@@ -85,6 +87,18 @@ public class DetailActivity extends AppCompatActivity {
                 descriptionView.setText(result.getDescription());
                 mAdapter.setImages(result.getPreviewUrlList());
                 mModelAdapter.addAll(result.getModels().getModelList());
+                ImageRequest ir = new ImageRequest(result.getThumbnailUrl());
+                NetworkManager.getInstance().getNetworkData(ir, new NetworkManager.OnResultListener<Bitmap>() {
+                    @Override
+                    public void onSuccess(NetworkRequest<Bitmap> request, Bitmap result) {
+                        thumbnailView.setImageBitmap(result);
+                    }
+
+                    @Override
+                    public void onFail(NetworkRequest<Bitmap> request, int errorCode, String errorMessage) {
+                        Toast.makeText(DetailActivity.this, "bitmap fail", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
 
             @Override
