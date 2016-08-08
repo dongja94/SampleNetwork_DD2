@@ -71,7 +71,7 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:text="Small Text"
-        android:id="@+id/text_description"
+        android:id="@+id/text_detailDescription"
         android:layout_below="@+id/image_thumbnail"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"

@@ -27,7 +27,7 @@ public class ProductView extends FrameLayout {
     TextView likeView;
     @BindView(R.id.text_download)
     TextView downloadView;
-    @BindView(R.id.text_description)
+    @BindView(R.id.text_detailDescription)
     TextView descriptionView;
 
     public ProductView(Context context, AttributeSet attrs) {

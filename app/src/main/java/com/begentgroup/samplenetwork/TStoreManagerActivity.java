@@ -1,7 +1,6 @@
 package com.begentgroup.samplenetwork;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -68,8 +67,11 @@ public class TStoreManagerActivity extends AppCompatActivity {
     @OnItemClick(R.id.list_tstore)
     public void onProductItemClick(AdapterView<?> parent, View view, int position, long id) {
         Product p = (Product)listView.getItemAtPosition(position);
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(p.getTinyUrl()));
+        Intent intent = new Intent(this, DetailActivity.class);
+        intent.putExtra(DetailActivity.EXTRA_PRODUCT_ID, p.getProductId());
         startActivity(intent);
+//        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(p.getTinyUrl()));
+//        startActivity(intent);
     }
 
 }

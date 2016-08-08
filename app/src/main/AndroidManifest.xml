@@ -19,7 +19,8 @@
         </activity>
         <activity android:name=".TStoreActivity" />
         <activity android:name=".TStoreXMLActivity" />
-        <activity android:name=".TStoreManagerActivity"></activity>
+        <activity android:name=".TStoreManagerActivity" />
+        <activity android:name=".DetailActivity"></activity>
     </application>
 
 </manifest>
