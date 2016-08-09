@@ -1,5 +1,7 @@
 package com.begentgroup.samplenetwork.manager;
 
+import android.content.Context;
+
 import com.begentgroup.samplenetwork.autodata.TStore;
 import com.begentgroup.samplenetwork.autodata.TStoreResult;
 import com.google.gson.Gson;
@@ -18,11 +20,11 @@ public class TStoreOkHttpRequest extends OkHttpRequest<TStore> {
     public static final String SORT_LATEST = "L";
     public static final String SORT_DOWNLOAD = "D";
 
-    public TStoreOkHttpRequest(String keyword) {
-        this(keyword, 1, 10, SORT_LATEST);
+    public TStoreOkHttpRequest(Context context, String keyword) {
+        this(context, keyword, 1, 10, SORT_LATEST);
     }
 
-    public TStoreOkHttpRequest(String keyword, int page, int count, String sort) {
+    public TStoreOkHttpRequest(Context context, String keyword, int page, int count, String sort) {
         HttpUrl url = new HttpUrl.Builder()
                 .scheme("http")
                 .host("apis.skplanetx.com")
@@ -39,6 +41,7 @@ public class TStoreOkHttpRequest extends OkHttpRequest<TStore> {
                 .url(url)
                 .header("Accept", "application/json")
                 .header("appKey","2bc7afe3-fc89-3125-b699-b9fb7cfe2fae")
+                .tag(context)
                 .build();
     }
 

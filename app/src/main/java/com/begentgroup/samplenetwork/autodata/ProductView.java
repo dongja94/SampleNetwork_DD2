@@ -3,11 +3,12 @@ package com.begentgroup.samplenetwork.autodata;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.begentgroup.samplenetwork.R;
-import com.begentgroup.samplenetwork.URLImageView;
 import com.begentgroup.samplenetwork.manager.ImageRequest;
+import com.squareup.picasso.Picasso;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -21,7 +22,7 @@ public class ProductView extends FrameLayout {
     }
 
     @BindView(R.id.image_thumbnail)
-    URLImageView thumbView;
+    ImageView thumbView;
     @BindView(R.id.text_name)
     TextView nameView;
     @BindView(R.id.text_like)
@@ -45,7 +46,13 @@ public class ProductView extends FrameLayout {
         likeView.setText("" + product.getScore());
         downloadView.setText("" + product.getDownloadCount());
         descriptionView.setText("" + product.getDescription());
-        thumbView.setImageURL(product.getThumbnailUrl());
+        Picasso.with(getContext())
+                .load(product.getThumbnailUrl())
+                .placeholder(R.drawable.ic_stub)
+                .error(R.drawable.ic_error)
+                .into(thumbView);
+
+//        thumbView.setImageURL(product.getThumbnailUrl());
 //        if (request != null) {
 //            request.setCancel(true);
 //            request = null;

@@ -48,7 +48,7 @@ public class OkHttpActivity extends AppCompatActivity {
     public void onSerach(View view) {
         String keyword = keywordView.getText().toString();
         if (!TextUtils.isEmpty(keyword)) {
-            TStoreOkHttpRequest request = new TStoreOkHttpRequest(keyword);
+            TStoreOkHttpRequest request = new TStoreOkHttpRequest(this, keyword);
             OkHttpNetworkManager.getInstance().getNetworkData(request, new OkHttpNetworkManager.OnResultListener<TStore>() {
                 @Override
                 public void onSuccess(OkHttpRequest<TStore> request, TStore result) {
@@ -69,5 +69,11 @@ public class OkHttpActivity extends AppCompatActivity {
         Intent intent = new Intent(this, DetailActivity.class);
         intent.putExtra(DetailActivity.EXTRA_PRODUCT_ID, p.getProductId());
         startActivity(intent);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        OkHttpNetworkManager.getInstance().cancelAll(this);
     }
 }

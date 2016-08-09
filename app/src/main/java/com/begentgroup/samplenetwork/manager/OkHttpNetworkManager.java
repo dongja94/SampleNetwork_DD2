@@ -12,9 +12,12 @@ import com.franmontiel.persistentcookiejar.cache.SetCookieCache;
 import com.franmontiel.persistentcookiejar.persistence.SharedPrefsCookiePersistor;
 
 import java.io.File;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Cache;
+import okhttp3.Call;
+import okhttp3.Dispatcher;
 import okhttp3.OkHttpClient;
 
 /**
@@ -93,4 +96,23 @@ public class OkHttpNetworkManager {
         request.process(client);
     }
 
+    public void cancelAll() {
+        client.dispatcher().cancelAll();
+    }
+
+    public void cancelAll(Object tag) {
+        Dispatcher dispatcher = client.dispatcher();
+        List<Call> list = dispatcher.queuedCalls();
+        for (Call call : list) {
+            if (call.request().tag().equals(tag)) {
+                call.cancel();
+            }
+        }
+        list = dispatcher.runningCalls();
+        for (Call call : list) {
+            if (call.request().tag().equals(tag)) {
+                call.cancel();
+            }
+        }
+    }
 }

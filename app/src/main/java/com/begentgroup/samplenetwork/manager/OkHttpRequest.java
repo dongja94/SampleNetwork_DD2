@@ -58,6 +58,17 @@ public abstract class OkHttpRequest<T> implements Callback {
         }
     }
 
+    public void cancel() {
+        if (call != null) {
+            call.cancel();
+        }
+    }
+
+    public boolean isCancel() {
+        if (call == null) return false;
+        return call.isCanceled();
+    }
+
     private void sendSuccess(T result) {
         this.result = result;
         OkHttpNetworkManager.getInstance().sendSuccess(this);
